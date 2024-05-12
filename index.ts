@@ -1,1 +1,3 @@
-console.log('Se prendio esta mrd')
+import { createApp, serveApp } from '@/core/app'
+
+serveApp(createApp())
