@@ -1,0 +1,126 @@
+
+Table users {
+    id          uuid [pk]
+    first_name  text [not null]
+    last_name   text [not null]
+    email       text [not null]
+    token    text [not null]
+    plan       uuid [ref: > plans.id]
+    created_at  datetime [not null]
+    updated_at  datetime [not null]
+    status      text [not null]
+}
+
+Table plans {
+    id          uuid [pk]
+    name        text [not null]
+    price       decimal(10, 2) [not null]
+    description text
+    created_at  datetime [not null]
+    updated_at  datetime [not null]
+    status      text [not null]
+}
+
+Table plan_limits {
+    id          uuid [pk]
+    plan     uuid [ref: > plans.id]
+    limit_items int [not null]
+    organization_type uuid [ref: > organization_type.id]
+    created_at  datetime [not null]
+    updated_at  datetime [not null]
+    status      text [not null]
+}
+
+Table organization_type {
+    id          uuid [pk]
+    name        text [not null]
+    description text
+    created_at  datetime [not null]
+    updated_at  datetime [not null]
+    status      text [not null]
+}
+
+Table organizations {
+    id          uuid [pk]
+    name        text [not null]
+    description text
+    type     uuid [ref: > organization_type.id]
+    user    uuid [ref: > users.id]
+    created_at  datetime [not null]
+}
+
+Table targets {
+    id          uuid [pk]
+    name        text [not null]
+    created_at  datetime [not null]
+    updated_at  datetime [not null]
+    status      text [not null]
+}
+
+Table organization_targets {
+    id          uuid [pk]
+    organization_id     uuid [ref: > organizations.id]
+    target     uuid [ref: > targets.id]
+    created_at  datetime [not null]
+    updated_at  datetime [not null]
+    status      text [not null]
+}
+
+Table items {
+    id          uuid [pk]
+    name        text [not null]
+    description text
+    subprice       decimal(10, 2)
+    orgazation uuid [ref: > organizations.id]
+    created_at  datetime [not null]
+    updated_at  datetime [not null]
+    status      text [not null]
+}
+
+Table item_targets {
+    id          uuid [pk]
+    item    uuid [ref: > items.id]
+    target     uuid [ref: > targets.id]
+    created_at  datetime [not null]
+    updated_at  datetime [not null]
+    status      text [not null]
+}
+
+Table payment_plans {
+    id          uuid [pk]
+    item    uuid [ref: > items.id]
+    created_at  datetime [not null]
+    updated_at  datetime [not null]
+    status      text [not null]
+}
+
+Table payment_plan_details {
+    id          uuid [pk]
+    payment_plan    uuid [ref: > payment_plans.id]
+    duration numeric
+    per_duration_price decimal(10, 2)
+    total_price decimal(10, 2)
+    interest_rate decimal(10, 2)
+    type enum('monthly', 'yearly')
+    created_at  datetime [not null]
+    updated_at  datetime [not null]
+    status      text [not null]
+}
+
+Table accept_payment_methods {
+    id          uuid [pk]
+    payment_plan_detail    uuid [ref: > payment_plan_details.id]
+    payment_method     uuid [ref: > payment_methods.id]
+    created_at  datetime [not null]
+    updated_at  datetime [not null]
+    status      text [not null]
+}
+
+Table payment_methods {
+    id          uuid [pk]
+    name        text [not null]
+    description text
+    created_at  datetime [not null]
+    updated_at  datetime [not null]
+    status      text [not null]
+}
