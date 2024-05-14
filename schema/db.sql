@@ -166,8 +166,34 @@ BEGIN
 
     INSERT INTO auth.users (first_name, last_name, email, token, plan)
     VALUES (first_name, last_name, email, token, plan_id);
+END;
+$$ LANGUAGE plpgsql;
 
-    EXECUTE format('CREATE USER %I PASSWORD %L', email, token);
+CREATE OR REPLACE FUNCTION auth.resolve_user(
+    email TEXT,
+    password TEXT
+) RETURNS BOOLEAN AS $$
+DECLARE
+    token TEXT;
+BEGIN
+    SELECT token INTO token FROM auth.users WHERE email = email;
+
+    RETURN token = crypt(password, token);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION auth.login (
+    email TEXT,
+    password TEXT
+) RETURNS TEXT AS $$
+DECLARE
+    token TEXT;
+BEGIN
+    IF auth.resolve_user(email, password) THEN
+        RETURN token;
+    ELSE
+        RETURN NULL;
+    END IF;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -189,7 +215,5 @@ BEGIN
         email = email,
         token = token
     WHERE id = id;
-
-    EXECUTE format('ALTER USER %I WITH ENCRYPTED PASSWORD %L', email, password);
 END;
 $$ LANGUAGE plpgsql;

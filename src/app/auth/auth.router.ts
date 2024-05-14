@@ -1,5 +1,7 @@
 import { createRouter } from '@/core/routers'
 import multer from 'multer'
+import { createDbConn } from 'app-data-source'
+import { User } from '../../entity/user.entity'
 
 const storage = multer.memoryStorage()
 
@@ -10,7 +12,12 @@ const authRouter = createRouter({
 })
 
 authRouter.module.get('/login', upload.none(), (req, res) => {
-  res.send('Login')
+  const db = createDbConn()
+
+  db.getRepository(User).count().then(count => {
+    res.json({ count })
+  })
+    .catch(console.error)
 })
 
 export default authRouter
