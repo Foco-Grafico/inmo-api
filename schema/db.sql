@@ -1,5 +1,6 @@
--- Active: 1715715294984@@127.0.0.1@5432@inmo
-# A postgresql schema file
+-- Active: 1715728318816@@127.0.0.1@5432@inmo
+DROP DATABASE IF EXISTS inmo;
+CREATE DATABASE inmo;
 
 CREATE SCHEMA IF NOT EXISTS auth;
 
